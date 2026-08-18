@@ -1,0 +1,1158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>IloveLinkLengthening</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      margin: 0;
+      padding: 0;
+      background: #fff;
+      color: #000;
+      font-family: Arial, Helvetica, sans-serif;
+    }
+
+    body {
+      padding: 40px 20px;
+    }
+
+    main {
+      width: 100%;
+      max-width: 850px;
+      margin: 0 auto;
+    }
+
+    h1 {
+      margin: 0 0 10px;
+      font-size: 32px;
+      max-width: 100%;
+      overflow-wrap: anywhere;
+      word-wrap: break-word;
+    }
+
+    p {
+      line-height: 1.5;
+      max-width: 100%;
+      overflow-wrap: anywhere;
+      word-wrap: break-word;
+    }
+
+    .tabs {
+      display: flex;
+      gap: 8px;
+      margin: 30px 0;
+      flex-wrap: wrap;
+    }
+
+    .tab-button {
+      margin: 0;
+      background: #fff;
+      color: #000;
+      border: 1px solid #000;
+    }
+
+    .tab-button.active {
+      background: #000;
+      color: #fff;
+    }
+
+    .panel {
+      display: none;
+    }
+
+    .panel.active {
+      display: block;
+    }
+
+    label {
+      display: block;
+      margin-top: 20px;
+      margin-bottom: 8px;
+      font-weight: bold;
+    }
+
+    input,
+    textarea {
+      display: block;
+      width: 100%;
+      border: 1px solid #000;
+      border-radius: 0;
+      background: #fff;
+      color: #000;
+      font: inherit;
+      outline: none;
+    }
+
+    input {
+      padding: 12px;
+    }
+
+    textarea {
+      min-height: 220px;
+      padding: 12px;
+      resize: vertical;
+      line-height: 1.4;
+    }
+
+    input:focus,
+    textarea:focus {
+      outline: 2px solid #000;
+      outline-offset: 1px;
+    }
+
+    button {
+      margin-top: 12px;
+      padding: 11px 16px;
+      border: 1px solid #000;
+      border-radius: 0;
+      background: #000;
+      color: #fff;
+      font: inherit;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: #fff;
+      color: #000;
+    }
+
+    .tabs button:hover {
+      background: #000;
+      color: #fff;
+    }
+
+    #generatedLink,
+    #decodedDestination {
+      margin-top: 20px;
+      padding: 12px;
+      border: 1px solid #000;
+      overflow-x: auto;
+      overflow-y: hidden;
+      white-space: nowrap;
+      max-width: 100%;
+      line-height: 1.5;
+    }
+
+    #result,
+    #decodeResult {
+      display: none;
+      margin-top: 30px;
+    }
+
+    #error,
+    #decodeError {
+      margin-top: 15px;
+      color: #b00020;
+      font-weight: bold;
+      overflow-wrap: anywhere;
+    }
+
+    .note {
+      font-size: 14px;
+    }
+  </style>
+</head>
+
+<body>
+
+<main>
+
+  <h1>IloveLinkLengthening</h1>
+
+  <p>
+    Turn ordinary URLs into unnecessarily enormous URLs.
+  </p>
+
+  <div class="tabs">
+
+    <button
+      id="generateTab"
+      class="tab-button active"
+      type="button"
+    >
+      Generate
+    </button>
+
+    <button
+      id="decodeTab"
+      class="tab-button"
+      type="button"
+    >
+      Decode a link
+    </button>
+
+  </div>
+
+  <section
+    id="generatePanel"
+    class="panel active"
+  >
+
+    <label for="urlInput">
+      URL
+    </label>
+
+    <input
+      id="urlInput"
+      type="text"
+      inputmode="url"
+      autocomplete="url"
+      spellcheck="false"
+      placeholder="youtube.com"
+    >
+
+    <button
+      id="generateButton"
+      type="button"
+    >
+      Generate link
+    </button>
+
+    <div id="error"></div>
+
+    <section id="result">
+
+      <p>
+        <strong>Generated link:</strong>
+      </p>
+
+      <div id="generatedLink"></div>
+
+      <button
+        id="copyButton"
+        type="button"
+      >
+        Copy link
+      </button>
+
+      <p class="note">
+        25 faux folders • folder 15 contains the file identifier •
+        folder 19 contains the real destination •
+        30 faux queries • UTM nonsense included
+      </p>
+
+    </section>
+
+  </section>
+
+  <section
+    id="decodePanel"
+    class="panel"
+  >
+
+    <p>
+      Paste one of your enormous links below.
+      The decoder ignores the faux folders, faux queries,
+      and UTM parameters and reads folder 19.
+    </p>
+
+    <label for="decodeInput">
+      Lengthened link
+    </label>
+
+    <textarea
+      id="decodeInput"
+      spellcheck="false"
+      placeholder="Paste your enormous link here..."
+    ></textarea>
+
+    <button
+      id="decodeButton"
+      type="button"
+    >
+      Decode link
+    </button>
+
+    <div id="decodeError"></div>
+
+    <section id="decodeResult">
+
+      <p>
+        <strong>Destination:</strong>
+      </p>
+
+      <div id="decodedDestination"></div>
+
+      <button
+        id="openDestinationButton"
+        type="button"
+      >
+        Open destination
+      </button>
+
+    </section>
+
+  </section>
+
+</main>
+
+<script>
+const BASE_URL =
+  "https://ilovelinklengthening-youlovelinklengthening-weallloveitsomuch.ryzedns.org/index.html";
+
+const FAUX_FOLDER_COUNT = 25;
+const FILE_IDENTIFIER_FOLDER_INDEX = 14;
+const REAL_FOLDER_INDEX = 18;
+const FAUX_QUERY_COUNT = 30;
+
+const FILE_ID_INDEX_HTML = "mm";
+const FILE_ID_INDEX_PHP = "mw";
+const FILE_ID_OTHER = "wm";
+
+const generateTab =
+  document.getElementById("generateTab");
+
+const decodeTab =
+  document.getElementById("decodeTab");
+
+const generatePanel =
+  document.getElementById("generatePanel");
+
+const decodePanel =
+  document.getElementById("decodePanel");
+
+const urlInput =
+  document.getElementById("urlInput");
+
+const generateButton =
+  document.getElementById("generateButton");
+
+const copyButton =
+  document.getElementById("copyButton");
+
+const generatedLink =
+  document.getElementById("generatedLink");
+
+const result =
+  document.getElementById("result");
+
+const errorBox =
+  document.getElementById("error");
+
+const decodeInput =
+  document.getElementById("decodeInput");
+
+const decodeButton =
+  document.getElementById("decodeButton");
+
+const decodeError =
+  document.getElementById("decodeError");
+
+const decodeResult =
+  document.getElementById("decodeResult");
+
+const decodedDestination =
+  document.getElementById("decodedDestination");
+
+const openDestinationButton =
+  document.getElementById(
+    "openDestinationButton"
+  );
+
+generateTab.addEventListener(
+  "click",
+  function() {
+    generateTab.classList.add("active");
+    decodeTab.classList.remove("active");
+    generatePanel.classList.add("active");
+    decodePanel.classList.remove("active");
+  }
+);
+
+decodeTab.addEventListener(
+  "click",
+  function() {
+    decodeTab.classList.add("active");
+    generateTab.classList.remove("active");
+    decodePanel.classList.add("active");
+    generatePanel.classList.remove("active");
+  }
+);
+
+function normalizeUrl(input) {
+  let value = input.trim();
+
+  if (!value) {
+    throw new Error(
+      "Please enter a URL."
+    );
+  }
+
+  if (!/^https?:\/\//i.test(value)) {
+    value = "https://" + value;
+  }
+
+  let url;
+
+  try {
+    url = new URL(value);
+  }
+
+  catch {
+    throw new Error(
+      "That is not a valid URL."
+    );
+  }
+
+  if (
+    url.protocol !== "http:" &&
+    url.protocol !== "https:"
+  ) {
+    throw new Error(
+      "Only HTTP and HTTPS URLs are supported."
+    );
+  }
+
+  return url.href;
+}
+
+function utf8ToBinary(text) {
+  const bytes =
+    new TextEncoder().encode(text);
+
+  let binary = "";
+
+  for (const byte of bytes) {
+    binary +=
+      byte
+        .toString(2)
+        .padStart(8, "0");
+  }
+
+  return binary;
+}
+
+function binaryToUtf8(binary) {
+  if (
+    !binary ||
+    binary.length % 8 !== 0
+  ) {
+    throw new Error(
+      "Invalid binary data."
+    );
+  }
+
+  const bytes =
+    new Uint8Array(
+      binary.length / 8
+    );
+
+  for (
+    let i = 0;
+    i < bytes.length;
+    i++
+  ) {
+    const byte =
+      binary.slice(
+        i * 8,
+        i * 8 + 8
+      );
+
+    bytes[i] =
+      parseInt(byte, 2);
+  }
+
+  try {
+    return new TextDecoder(
+      "utf-8",
+      {
+        fatal: true
+      }
+    ).decode(bytes);
+  }
+
+  catch {
+    throw new Error(
+      "Invalid UTF-8 data."
+    );
+  }
+}
+
+function binaryToCipher(binary) {
+  let output = "";
+
+  for (const bit of binary) {
+    if (bit === "0") {
+      output +=
+        Math.random() < 0.5
+          ? "m"
+          : "w";
+    }
+
+    else {
+      output +=
+        Math.random() < 0.5
+          ? "M"
+          : "W";
+    }
+  }
+
+  return output;
+}
+
+function cipherToBinary(cipher) {
+  let binary = "";
+
+  for (const character of cipher) {
+    if (
+      character === "m" ||
+      character === "w"
+    ) {
+      binary += "0";
+    }
+
+    else if (
+      character === "M" ||
+      character === "W"
+    ) {
+      binary += "1";
+    }
+
+    else {
+      throw new Error(
+        "Invalid cipher character: " +
+        character
+      );
+    }
+  }
+
+  return binary;
+}
+
+function encodeDestination(url) {
+  return binaryToCipher(
+    utf8ToBinary(url)
+  );
+}
+
+function decodeDestinationCipher(cipher) {
+  return binaryToUtf8(
+    cipherToBinary(cipher)
+  );
+}
+
+function randomCipherString(
+  minLength,
+  maxLength
+) {
+  const length =
+    Math.floor(
+      Math.random() *
+      (
+        maxLength -
+        minLength +
+        1
+      )
+    ) +
+    minLength;
+
+  const characters = [
+    "m",
+    "w",
+    "M",
+    "W"
+  ];
+
+  let output = "";
+
+  for (
+    let i = 0;
+    i < length;
+    i++
+  ) {
+    output +=
+      characters[
+        Math.floor(
+          Math.random() *
+          characters.length
+        )
+      ];
+  }
+
+  return output;
+}
+
+function getFileInformation(destination) {
+  const url =
+    new URL(destination);
+
+  let pathname =
+    url.pathname;
+
+  if (
+    !pathname ||
+    pathname === "/"
+  ) {
+    return {
+      type: "index.html",
+      filename: "index.html"
+    };
+  }
+
+  pathname =
+    pathname.replace(
+      /\/+$/,
+      ""
+    );
+
+  const parts =
+    pathname.split("/");
+
+  const filename =
+    parts[parts.length - 1];
+
+  if (!filename) {
+    return {
+      type: "index.html",
+      filename: "index.html"
+    };
+  }
+
+  if (
+    filename.toLowerCase() ===
+    "index.html"
+  ) {
+    return {
+      type: "index.html",
+      filename: filename
+    };
+  }
+
+  if (
+    filename.toLowerCase() ===
+    "index.php"
+  ) {
+    return {
+      type: "index.php",
+      filename: filename
+    };
+  }
+
+  return {
+    type: "other",
+    filename: filename
+  };
+}
+
+function generateFileIdentifier(destination) {
+  const info =
+    getFileInformation(
+      destination
+    );
+
+  if (info.type === "index.html") {
+    return (
+      FILE_ID_INDEX_HTML +
+      randomCipherString(
+        20,
+        80
+      )
+    );
+  }
+
+  if (info.type === "index.php") {
+    return (
+      FILE_ID_INDEX_PHP +
+      randomCipherString(
+        20,
+        80
+      )
+    );
+  }
+
+  return (
+    FILE_ID_OTHER +
+    info.filename
+  );
+}
+
+function generateFauxFolder() {
+  return randomCipherString(
+    12,
+    70
+  );
+}
+
+function generateFauxQueryName() {
+  return randomCipherString(
+    8,
+    45
+  );
+}
+
+function generateFauxQueryValue() {
+  return randomCipherString(
+    12,
+    80
+  );
+}
+
+function generateUtmParameters() {
+  const utmNames = [
+    "utm_source",
+    "utm_medium",
+    "utm_campaign",
+    "utm_content",
+    "utm_term",
+    "utm_id",
+    "utm_name",
+    "utm_version"
+  ];
+
+  const queries = [];
+
+  for (const name of utmNames) {
+    queries.push(
+      name +
+      "=" +
+      encodeURIComponent(
+        randomCipherString(
+          20,
+          90
+        )
+      )
+    );
+  }
+
+  return queries;
+}
+
+function generateFolders(
+  realPayload,
+  destination
+) {
+  const folders = [];
+
+  for (
+    let i = 0;
+    i < FAUX_FOLDER_COUNT;
+    i++
+  ) {
+    if (
+      i === FILE_IDENTIFIER_FOLDER_INDEX
+    ) {
+      folders.push(
+        generateFileIdentifier(
+          destination
+        )
+      );
+    }
+
+    else if (
+      i === REAL_FOLDER_INDEX
+    ) {
+      folders.push(
+        realPayload
+      );
+    }
+
+    else {
+      folders.push(
+        generateFauxFolder()
+      );
+    }
+  }
+
+  return folders;
+}
+
+function generateQueries() {
+  const queries = [];
+
+  for (
+    let i = 0;
+    i < FAUX_QUERY_COUNT;
+    i++
+  ) {
+    queries.push(
+      encodeURIComponent(
+        generateFauxQueryName()
+      )
+      +
+      "=" +
+      encodeURIComponent(
+        generateFauxQueryValue()
+      )
+    );
+  }
+
+  return queries;
+}
+
+function buildGiantUrl(destination) {
+  const realPayload =
+    encodeDestination(
+      destination
+    );
+
+  const folders =
+    generateFolders(
+      realPayload,
+      destination
+    );
+
+  const fakeQueries =
+    generateQueries();
+
+  const utmQueries =
+    generateUtmParameters();
+
+  let fragment =
+    "/" +
+    folders.join("/") +
+    "/";
+
+  fragment +=
+    "?" +
+    fakeQueries.join("&");
+
+  fragment +=
+    "&" +
+    utmQueries.join("&");
+
+  return (
+    BASE_URL +
+    "#" +
+    fragment
+  );
+}
+
+function generateLink() {
+  errorBox.textContent = "";
+  result.style.display = "none";
+
+  try {
+    const destination =
+      normalizeUrl(
+        urlInput.value
+      );
+
+    const giantUrl =
+      buildGiantUrl(
+        destination
+      );
+
+    generatedLink.textContent =
+      giantUrl;
+
+    result.style.display =
+      "block";
+  }
+
+  catch (error) {
+    errorBox.textContent =
+      error.message ||
+      "Unable to generate link.";
+  }
+}
+
+async function copyLink() {
+  const link =
+    generatedLink.textContent;
+
+  if (!link) {
+    return;
+  }
+
+  try {
+    await navigator.clipboard.writeText(
+      link
+    );
+
+    copyButton.textContent =
+      "Copied!";
+
+    setTimeout(
+      function() {
+        copyButton.textContent =
+          "Copy link";
+      },
+      1500
+    );
+  }
+
+  catch {
+    const textarea =
+      document.createElement(
+        "textarea"
+      );
+
+    textarea.value =
+      link;
+
+    textarea.style.position =
+      "fixed";
+
+    textarea.style.left =
+      "-9999px";
+
+    document.body.appendChild(
+      textarea
+    );
+
+    textarea.focus();
+    textarea.select();
+
+    try {
+      document.execCommand(
+        "copy"
+      );
+
+      copyButton.textContent =
+        "Copied!";
+    }
+
+    catch {
+      copyButton.textContent =
+        "Copy failed";
+    }
+
+    textarea.remove();
+  }
+}
+
+function decodeLink() {
+  decodeError.textContent = "";
+  decodeResult.style.display = "none";
+
+  const input =
+    decodeInput.value.trim();
+
+  if (!input) {
+    decodeError.textContent =
+      "Paste a lengthened link first.";
+
+    return;
+  }
+
+  try {
+    const hashPosition =
+      input.indexOf("#");
+
+    if (
+      hashPosition === -1
+    ) {
+      throw new Error(
+        "This link doesn't contain an encoded fragment."
+      );
+    }
+
+    const fragment =
+      input.slice(
+        hashPosition + 1
+      );
+
+    if (!fragment) {
+      throw new Error(
+        "The encoded fragment is empty."
+      );
+    }
+
+    const questionMark =
+      fragment.indexOf("?");
+
+    const pathPart =
+      questionMark === -1
+        ? fragment
+        : fragment.slice(
+            0,
+            questionMark
+          );
+
+    const folders =
+      pathPart
+        .split("/")
+        .filter(Boolean);
+
+    if (
+      folders.length <
+      FAUX_FOLDER_COUNT
+    ) {
+      throw new Error(
+        "This doesn't appear to be a valid lengthened link. Not enough folders."
+      );
+    }
+
+    const realPayload =
+      folders[
+        REAL_FOLDER_INDEX
+      ];
+
+    if (
+      !/^[mMwW]+$/.test(
+        realPayload
+      )
+    ) {
+      throw new Error(
+        "Folder 19 does not contain a valid m/w/M/W payload."
+      );
+    }
+
+    const destination =
+      decodeDestinationCipher(
+        realPayload
+      );
+
+    const destinationUrl =
+      new URL(destination);
+
+    if (
+      destinationUrl.protocol !== "http:" &&
+      destinationUrl.protocol !== "https:"
+    ) {
+      throw new Error(
+        "The decoded destination is not an HTTP/HTTPS URL."
+      );
+    }
+
+    decodedDestination.textContent =
+      destinationUrl.href;
+
+    openDestinationButton.dataset.url =
+      destinationUrl.href;
+
+    decodeResult.style.display =
+      "block";
+  }
+
+  catch (error) {
+    decodeError.textContent =
+      error.message ||
+      "Unable to decode this link.";
+  }
+}
+
+openDestinationButton.addEventListener(
+  "click",
+  function() {
+    const url =
+      openDestinationButton
+        .dataset
+        .url;
+
+    if (!url) {
+      return;
+    }
+
+    window.open(
+      url,
+      "_blank",
+      "noopener,noreferrer"
+    );
+  }
+);
+
+generateButton.addEventListener(
+  "click",
+  generateLink
+);
+
+copyButton.addEventListener(
+  "click",
+  copyLink
+);
+
+decodeButton.addEventListener(
+  "click",
+  decodeLink
+);
+
+urlInput.addEventListener(
+  "keydown",
+  function(event) {
+    if (
+      event.key === "Enter"
+    ) {
+      generateLink();
+    }
+  }
+);
+
+function handleIncomingLengthenedLink() {
+  const hash =
+    window.location.hash;
+
+  if (
+    !hash ||
+    hash.length <= 1
+  ) {
+    return;
+  }
+
+  try {
+    const fragment =
+      hash.substring(1);
+
+    const questionMark =
+      fragment.indexOf("?");
+
+    const pathPart =
+      questionMark === -1
+        ? fragment
+        : fragment.substring(
+            0,
+            questionMark
+          );
+
+    const folders =
+      pathPart
+        .split("/")
+        .filter(Boolean);
+
+    if (
+      folders.length <
+      FAUX_FOLDER_COUNT
+    ) {
+      return;
+    }
+
+    const realPayload =
+      folders[
+        REAL_FOLDER_INDEX
+      ];
+
+    if (
+      !/^[mMwW]+$/.test(
+        realPayload
+      )
+    ) {
+      return;
+    }
+
+    const destination =
+      decodeDestinationCipher(
+        realPayload
+      );
+
+    const url =
+      new URL(destination);
+
+    if (
+      url.protocol !== "http:" &&
+      url.protocol !== "https:"
+    ) {
+      return;
+    }
+
+    window.location.replace(
+      url.href
+    );
+  }
+
+  catch {
+  }
+}
+
+handleIncomingLengthenedLink();
+</script>
+
+</body>
+</html>
