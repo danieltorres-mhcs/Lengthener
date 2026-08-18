@@ -63,7 +63,38 @@
       background: #000;
       color: #fff;
     }
+.loader {
+  --d: 22px;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  color: #222;
+  box-shadow:
+    calc(1 * var(--d)) calc(0 * var(--d)) 0 0,
+    calc(0.707 * var(--d)) calc(0.707 * var(--d)) 0 1px,
+    calc(0 * var(--d)) calc(1 * var(--d)) 0 2px,
+    calc(-0.707 * var(--d)) calc(0.707 * var(--d)) 0 3px,
+    calc(-1 * var(--d)) calc(0 * var(--d)) 0 4px,
+    calc(-0.707 * var(--d)) calc(-0.707 * var(--d)) 0 5px,
+    calc(0 * var(--d)) calc(-1 * var(--d)) 0 6px;
+  animation: l27 1s infinite steps(8);
+}
 
+@keyframes l27 {
+  100% {
+    transform: rotate(1turn);
+  }
+}
+
+#redirectLoader {
+  position: fixed;
+  inset: 0;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  background: #fff;
+  z-index: 999999;
+}
     .panel {
       display: none;
     }
@@ -162,13 +193,15 @@
 </head>
 
 <body>
-
+<div id="redirectLoader">
+  <div class="loader"></div>
+</div>
 <main>
 
   <h1>IloveLinkLengthening</h1>
 
   <p>
-    Turn ordinary URLs into unnecessarily enormous URLs.
+    Turn ordinary URLs into unnecessarily enormous URLs using faux folders, queries, and UTMs wrapped in a hash.
   </p>
 
   <div class="tabs">
@@ -206,7 +239,7 @@
       inputmode="url"
       autocomplete="url"
       spellcheck="false"
-      placeholder="youtube.com"
+      placeholder="bit.ly"
     >
 
     <button
@@ -261,7 +294,7 @@
     <textarea
       id="decodeInput"
       spellcheck="false"
-      placeholder="Paste your enormous link here..."
+      placeholder="ilovelink-lengthening-you-lovelinklengthening-we-allloveitsomuch.devs.surf#/WMmwwWWmWmMwwWWWM..."
     ></textarea>
 
     <button
@@ -296,7 +329,7 @@
 
 <script>
 const BASE_URL =
-  "https://ilovelinklengthening-youlovelinklengthening-weallloveitsomuch.ryzedns.org/index.html";
+  "ilovelinklengthening-ulovelinklengthing-webothloveit.devs.surf/index.html";
 
 const FAUX_FOLDER_COUNT = 25;
 const FILE_IDENTIFIER_FOLDER_INDEX = 14;
@@ -1141,7 +1174,7 @@ function handleIncomingLengthenedLink() {
     ) {
       return;
     }
-
+document.getElementById("redirectLoader").style.display = "flex";
     window.location.replace(
       url.href
     );
